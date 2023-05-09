@@ -1,1 +1,46 @@
+#To upload the file into Google Colab
+from google.colab import files
+import pandas as pd
 
+# Upload the CSV file
+uploaded = files.upload()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
+
+# Load the dataset
+df = pd.read_csv('tweets.csv')
+
+# Select the OriginalTweet column as the text corpus
+text_corpus = df['OriginalTweet'].astype(str).values.tolist()
+
+# Tokenize the text corpus
+tokens = []
+for tweet in text_corpus:
+    tokens.extend(tweet.lower().split())
+
+# Remove stop words
+stopwords = set(STOPWORDS)
+tokens = [token for token in tokens if token not in stopwords]
+
+# Count word frequencies
+word_freq = {}
+for token in tokens:
+    if token in word_freq:
+        word_freq[token] += 1
+    else:
+        word_freq[token] = 1
+
+# Create a word cloud
+wordcloud = WordCloud(width = 800, height = 800, 
+                background_color ='lavender', 
+                stopwords = stopwords, 
+                min_font_size = 13).generate_from_frequencies(word_freq)
+
+# Display the word cloud
+plt.figure(figsize = (8, 8), facecolor = None) 
+plt.imshow(wordcloud) 
+plt.axis("off") 
+plt.tight_layout(pad = 0) 
+plt.show()
